@@ -16,5 +16,7 @@ public class ParkingResponse {
     private String carTicketId;
     private String carRegNo;
     private String carColor;
+    private Long slotId;
     private Date carParkingTime;
+
 }

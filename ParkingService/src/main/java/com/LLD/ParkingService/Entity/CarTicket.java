@@ -20,6 +20,7 @@ public class CarTicket {
     private Long carTicketId;
 
     private String carColor;
+    @Column(unique = true)
     private String carRegNumber;
     private Date carParkingTime;
 

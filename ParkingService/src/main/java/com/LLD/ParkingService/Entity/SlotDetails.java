@@ -19,4 +19,6 @@ public class SlotDetails {
 
     private Long metresAway;
 
+    private String state;
+
 }
