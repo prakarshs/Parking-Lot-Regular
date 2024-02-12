@@ -5,9 +5,7 @@ import com.LLD.ParkingService.Constants.ErrorConstants;
 import com.LLD.ParkingService.Entity.CarTicket;
 import com.LLD.ParkingService.Entity.SlotDetails;
 import com.LLD.ParkingService.Error.CustomError;
-import com.LLD.ParkingService.Model.CheckResponse;
-import com.LLD.ParkingService.Model.ParkingRequest;
-import com.LLD.ParkingService.Model.ParkingResponse;
+import com.LLD.ParkingService.Model.*;
 import com.LLD.ParkingService.Repository.CarTicketRepository;
 import com.LLD.ParkingService.Repository.SlotRepository;
 import lombok.extern.log4j.Log4j2;
@@ -16,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -104,10 +104,56 @@ public class ParkingServiceIMPL implements ParkingService{
                    .build();
 
        }
+       log.info("THERE ARE SUFFICIENT STOCKS !");
         return CheckResponse.builder()
                 .message("THERE ARE EXISTING SLOTS. WE CAN START PARKING NOW.")
                 .slotList(slotDetailsList)
                 .build();
 
+    }
+
+    @Override
+    public ColorResponse findCarsColor(String color) {
+        log.info("CHECKING FOR CARS...");
+       List<CarTicket> carTicketList = carTicketRepository.findByCarColor(color);
+       log.info("CHECKING FOR EMPTY CAR-LIST...");
+       if(carTicketList.isEmpty()){
+           log.info("THERE IS NO CAR WITH THE GIVEN COLOR");
+           return ColorResponse.builder()
+                   .message(" Unfortunately There Are No Cars With Color: "+color)
+                   .carList(carTicketList)
+                   .build();
+       }
+        log.info("RETURNING CARS WITH GIVEN COLORS...");
+        return ColorResponse.builder()
+                .message("Here's Your List Of Cars With Color: "+color)
+                .carList(carTicketList)
+                .build();
+    }
+
+    @Override
+    public SlotResponse findSlotsColor(String color) {
+        log.info("CHECKING FOR SLOTS WITH GIVEN COLOR CARS...");
+        List<CarTicket> carTicketList = carTicketRepository.findByCarColor(color);
+        log.info("CHECKING FOR EMPTY CAR-LIST...");
+        if(carTicketList.isEmpty()){
+            log.info("THERE IS NO CAR WITH THE GIVEN COLOR");
+            return SlotResponse.builder()
+                    .message(" Unfortunately There Are No Cars With Color: "+color)
+                    .slotList(Collections.emptyList())
+                    .build();
+        }
+        log.info("MAKING SLOT LIST FROM CARLIST");
+        List<SlotDetails> slotDetailsList = new ArrayList<>();
+        for (CarTicket i : carTicketList)
+        {
+            log.info("Slot Added");
+            slotDetailsList.add(i.getSlot());
+        }
+        log.info("RETURNING SLOTS WITH CARS OF GIVEN COLOR...");
+        return SlotResponse.builder()
+                .message("Here's Your List Of Slots With Cars Colored: "+color)
+                .slotList(slotDetailsList)
+                .build();
     }
 }

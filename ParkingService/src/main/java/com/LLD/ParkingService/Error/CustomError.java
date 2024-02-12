@@ -9,6 +9,7 @@ public class CustomError extends RuntimeException{
 
     public CustomError(String message, String resolution){
         super(message);
+        this.message = message;
         this.resolution = resolution;
     }
 }
