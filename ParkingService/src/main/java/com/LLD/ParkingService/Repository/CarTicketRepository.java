@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface CarTicketRepository extends JpaRepository<CarTicket,Long> {
    List<CarTicket> findByCarColor(String color);
+
+ Optional<CarTicket> findByCarRegNumber(String regNo);
 }

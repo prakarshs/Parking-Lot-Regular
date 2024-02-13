@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -155,5 +156,28 @@ public class ParkingServiceIMPL implements ParkingService{
                 .message("Here's Your List Of Slots With Cars Colored: "+color)
                 .slotList(slotDetailsList)
                 .build();
+    }
+
+    @Override
+    public ExitResponse exitCar(String regNo) {
+        log.info("CHECKING CAR REG NUMBER...");
+        CarTicket carTicket = carTicketRepository.findByCarRegNumber(regNo).orElseThrow(()-> new CustomError(ErrorConstants.INVALID_CAR_REG,ErrorConstants.TRY_WITH_A_DIFFERENT_CAR));
+        log.info("MARKING CAR SLOT AS VACANT...");
+        carTicket.getSlot().setState(AppConstants.VACANT);
+
+        Duration carDuration = Duration.between(Instant.now(),carTicket.getCarParkingTime().toInstant());
+
+        ExitResponse exitResponse = ExitResponse.builder()
+                .text(":: THE BELOW CAR IS EXITING ::")
+                .carTicketId(carTicket.getCarTicketId())
+                .carColor(carTicket.getCarColor())
+                .carRegNumber(carTicket.getCarRegNumber())
+                .carParkingDuration(carDuration)
+                .emptySlotDetails(carTicket.getSlot())
+                .build();
+
+        log.info("REMOVING CAR ENTITY FROM DB");
+        carTicketRepository.delete(carTicket);
+        return exitResponse;
     }
 }

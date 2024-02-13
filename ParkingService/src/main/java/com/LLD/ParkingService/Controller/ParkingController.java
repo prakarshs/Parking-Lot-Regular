@@ -1,6 +1,7 @@
 package com.LLD.ParkingService.Controller;
 
 import com.LLD.ParkingService.Model.CheckResponse;
+import com.LLD.ParkingService.Model.ExitResponse;
 import com.LLD.ParkingService.Model.ParkingRequest;
 import com.LLD.ParkingService.Model.ParkingResponse;
 import com.LLD.ParkingService.Service.ParkingService;
@@ -28,6 +29,11 @@ public class ParkingController {
     @GetMapping("/initialChecks")
     private ResponseEntity<CheckResponse> check(){
         return new ResponseEntity<>(parkingService.checkSlots(),HttpStatus.OK);
+    }
+
+    @PutMapping("/exit")
+    private ResponseEntity<ExitResponse> exit(@RequestParam("regNo") String regNo){
+        return new ResponseEntity<>(parkingService.exitCar(regNo),HttpStatus.OK);
     }
 
 }

@@ -12,4 +12,6 @@ public interface ParkingService {
     ColorResponse findCarsColor(String color);
 
     SlotResponse findSlotsColor(String color);
+
+    ExitResponse exitCar(String regNo);
 }
